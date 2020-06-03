@@ -1,0 +1,5 @@
+export default {
+  LOGOUT: "LOGOUT",
+  LOG_IN: "LOG_IN",
+  RECEIVE_CURRENT_USER: "RECEIVE_CURRENT_USER",
+};

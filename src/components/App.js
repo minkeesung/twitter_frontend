@@ -1,0 +1,48 @@
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
+import axios from "axios";
+import Home from "./Home";
+import constants from "../constants";
+import Navbar from "./Navigationbar";
+import RegisterForm from "./auth/RegisterForm";
+import LoginForm from "./auth/LoginForm";
+import AuthRoute from "../util/route_util";
+import "bootstrap/dist/css/bootstrap.min.css";
+
+function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3001/api/logged_in", { withCredentials: true })
+      .then((response) => {
+        if (response.data.logged_in) {
+          dispatch({
+            type: constants.RECEIVE_CURRENT_USER,
+            currentUser: response.data,
+          });
+        } else {
+          dispatch({
+            type: constants.RECEIVE_CURRENT_USER,
+            currentUser: null,
+          });
+        }
+      });
+  }, [dispatch]);
+
+  return (
+    <div className="App">
+      <BrowserRouter>
+        <Navbar />
+        <Switch>
+          <Route exact path="/" component={Home} />
+          <AuthRoute exact path="/login" component={LoginForm} />
+          <AuthRoute exact path="/register" component={RegisterForm} />
+        </Switch>
+      </BrowserRouter>
+    </div>
+  );
+}
+
+export default App;
