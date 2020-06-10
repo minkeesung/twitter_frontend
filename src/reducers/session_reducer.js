@@ -1,11 +1,6 @@
 import constants from "../constants";
 import produce from "immer";
 
-const _nullUser = Object.freeze({
-  currentUser: null,
-  errors: [],
-});
-
 const SessionReducer = produce((draft, action) => {
   switch (action.type) {
     case constants.RECEIVE_CURRENT_USER:
@@ -17,6 +12,6 @@ const SessionReducer = produce((draft, action) => {
     default:
       return;
   }
-}, _nullUser);
+}, null);
 
 export default SessionReducer;

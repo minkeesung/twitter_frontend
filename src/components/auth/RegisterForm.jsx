@@ -4,7 +4,7 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import constants from "../../constants";
 
-const RegisterForm = (props) => {
+const RegisterForm = () => {
   const { register, handleSubmit } = useForm();
   const dispatch = useDispatch();
 

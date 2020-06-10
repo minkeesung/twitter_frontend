@@ -2,7 +2,7 @@ import React from "react";
 import { Redirect, Route } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-const AuthRoute = ({ component: Component, ...rest }) => {
+export const AuthRoute = ({ component: Component, ...rest }) => {
   const currentUser = useSelector((state) => state.session.currentUser);
 
   return (
@@ -15,4 +15,15 @@ const AuthRoute = ({ component: Component, ...rest }) => {
   );
 };
 
-export default AuthRoute;
+export const LoggedInRoute = ({ component: Component, ...rest }) => {
+  const currentUser = useSelector((state) => state.session.currentUser);
+
+  return (
+    <Route
+      {...rest}
+      render={(props) =>
+        currentUser ? <Component {...rest} /> : <Redirect to="/login" />
+      }
+    />
+  );
+};

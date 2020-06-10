@@ -1,13 +1,16 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { BrowserRouter, Switch } from "react-router-dom";
 import axios from "axios";
 import Home from "./Home";
 import constants from "../constants";
 import Navbar from "./Navigationbar";
 import RegisterForm from "./auth/RegisterForm";
 import LoginForm from "./auth/LoginForm";
-import AuthRoute from "../util/route_util";
+import Users from "./Users";
+import Tags from "./Tags";
+import UserProfile from "./UserProfile";
+import { AuthRoute, LoggedInRoute } from "../util/route_util";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
@@ -36,9 +39,12 @@ function App() {
       <BrowserRouter>
         <Navbar />
         <Switch>
-          <Route exact path="/" component={Home} />
+          <LoggedInRoute exact path="/" component={Home} />
           <AuthRoute exact path="/login" component={LoginForm} />
           <AuthRoute exact path="/register" component={RegisterForm} />
+          <LoggedInRoute exact path="/users" component={Users} />
+          <LoggedInRoute exact path="/users/:id" component={UserProfile} />
+          <LoggedInRoute exact path="/tags/:tag" component={Tags} />
         </Switch>
       </BrowserRouter>
     </div>

@@ -29,13 +29,17 @@ const Navigationbar = (props) => {
           <Link to="/">Twitter</Link>
         </Navbar.Brand>
         {user ? (
-          <a href="#" onClick={logout}>
-            Logout
-          </a>
+          <>
+            <a href="#" onClick={logout}>
+              Logout
+            </a>
+            &nbsp; &nbsp;
+            <Link to="/users">Users</Link>
+          </>
         ) : (
           <>
             <Link to="/login">Login </Link> &nbsp; &nbsp;
-            <Link to="/register">Register</Link>
+            <Link to="/register">Register</Link>&nbsp; &nbsp;
           </>
         )}
       </Navbar>

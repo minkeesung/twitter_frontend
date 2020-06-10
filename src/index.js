@@ -1,11 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
 import App from "./components/App";
 import * as serviceWorker from "./serviceWorker";
 import rootReducer from "./reducers";
 import { createStore, compose } from "redux";
 import { Provider } from "react-redux";
+import { persistStore, persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
+import { PersistGate } from "redux-persist/integration/react";
 
 const composeEnhancers =
   (process.env.NODE_ENV === "development" &&
@@ -13,13 +15,23 @@ const composeEnhancers =
     window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) ||
   compose;
 
-export const store = createStore(rootReducer, {}, composeEnhancers());
+const persistConfig = {
+  key: "root",
+  storage,
+};
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+export const store = createStore(persistedReducer, {}, composeEnhancers());
+const persistor = persistStore(store);
 
 ReactDOM.render(
   <Provider store={store}>
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
+    <PersistGate loading={null} persistor={persistor}>
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    </PersistGate>
   </Provider>,
   document.getElementById("root")
 );
