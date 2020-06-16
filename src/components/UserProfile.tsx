@@ -2,10 +2,27 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-const UserProfile = (props) => {
-  const userId = props.location.pathname.slice(7);
-  const [tweets, setTweets] = useState(null);
-  const [following, setFollowing] = useState("loading");
+type pathname = {
+  pathname: string;
+};
+
+type location = {
+  location: pathname;
+};
+
+type tweet = {
+  created_at: string;
+  user_id: string;
+  body: string;
+  id: string;
+};
+
+type TweetArray = Array<tweet>;
+
+const UserProfile = ({ location }: location) => {
+  const userId = location.pathname.slice(7);
+  const [tweets, setTweets] = useState<TweetArray | null>(null);
+  const [following, setFollowing] = useState<boolean | string>("loading");
 
   useEffect(() => {
     const fetchTweets = async () => {
@@ -17,7 +34,7 @@ const UserProfile = (props) => {
       console.log(resp.data);
     };
     fetchTweets();
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     const fetchFollowing = async () => {
@@ -25,14 +42,13 @@ const UserProfile = (props) => {
         `${process.env.REACT_APP_API_DOMAIN}/api/relationships/${userId}`,
         { withCredentials: true }
       );
-      console.log("asodfijasdf", resp.data);
       setFollowing(resp.data.following);
     };
     fetchFollowing();
-  }, []);
+  }, [userId]);
 
-  const follow = async (followee_id) => {
-    const resp = await axios.post(
+  const follow = async (followee_id: string) => {
+    await axios.post(
       `${process.env.REACT_APP_API_DOMAIN}/api/relationships`,
       { followee_id },
       { withCredentials: true }
@@ -40,8 +56,8 @@ const UserProfile = (props) => {
     setFollowing(true);
   };
 
-  const unfollow = async (followee_id) => {
-    const resp = await axios.delete(
+  const unfollow = async (followee_id: string) => {
+    await axios.delete(
       `${process.env.REACT_APP_API_DOMAIN}/api/relationships/${followee_id}`,
       { withCredentials: true }
     );

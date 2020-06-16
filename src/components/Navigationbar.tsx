@@ -1,13 +1,15 @@
 import React from "react";
 import Navbar from "react-bootstrap/Navbar";
 import { useSelector } from "react-redux";
-import { Link, withRouter } from "react-router-dom";
+import { Link, withRouter, RouteComponentProps } from "react-router-dom";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import constants from "../constants";
+import { RootState } from "../reducers";
 
-const Navigationbar = (props) => {
-  const user = useSelector((state) => state.session.currentUser);
+const Navigationbar = ({ history }: RouteComponentProps) => {
+  const selectCurrentUser = (state: RootState) => state.session.currentUser;
+  const user = useSelector(selectCurrentUser);
   const dispatch = useDispatch();
 
   const logout = () => {
@@ -16,7 +18,7 @@ const Navigationbar = (props) => {
         withCredentials: true,
       });
       dispatch({ type: constants.LOGOUT });
-      props.history.push("/");
+      history.push("/");
     } catch (error) {
       console.log(error);
     }

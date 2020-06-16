@@ -5,11 +5,33 @@ import { useForm } from "react-hook-form";
 import "../css/textArea.css";
 import axios from "axios";
 import produce from "immer";
+import { RootState } from "../reducers";
+
+type FormData = {
+  body: string;
+};
+
+type tweet = {
+  created_at: string;
+  user_id: string;
+  body: string;
+  id: string;
+};
+
+type TweetArray = Array<tweet>;
 
 const Home = () => {
-  const { register, handleSubmit } = useForm();
-  const [tweets, setTweets] = useState(null);
-  const currentUserId = useSelector((state) => state.session.currentUser.id);
+  const { register, handleSubmit } = useForm<FormData>();
+  const [tweets, setTweets] = useState<TweetArray | null>(null);
+  const [input, setInput] = useState<string>("");
+  const selectCurrentUserId = (state: RootState) => {
+    if (state.session.currentUser) {
+      return state.session.currentUser.id;
+    } else {
+      return null;
+    }
+  };
+  const currentUserId = useSelector(selectCurrentUserId);
 
   useEffect(() => {
     const fetchTweets = async () => {
@@ -23,9 +45,7 @@ const Home = () => {
     fetchTweets();
   }, []);
 
-  const onSubmit = async (data) => {
-    const { body } = data;
-
+  const onSubmit = handleSubmit(async ({ body }) => {
     const resp = await axios.post(
       `${process.env.REACT_APP_API_DOMAIN}/api/tweets`,
       {
@@ -41,9 +61,10 @@ const Home = () => {
         draft[resp.data.id] = resp.data;
       })
     );
-  };
+    setInput("");
+  });
 
-  const deleteTweet = async (tweetId) => {
+  const deleteTweet = async (tweetId: string) => {
     const resp = await axios.delete(
       `${process.env.REACT_APP_API_DOMAIN}/api/tweets/${tweetId}`,
       { withCredentials: true }
@@ -56,15 +77,18 @@ const Home = () => {
     );
   };
 
-  console.log(tweets);
-
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={onSubmit}>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <label>
             Tweet:
-            <textarea name="body" ref={register} />
+            <textarea
+              name="body"
+              ref={register}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+            />
           </label>
           <input type="submit" />
         </div>
@@ -73,7 +97,7 @@ const Home = () => {
         <ul>
           {Object.entries(tweets).map(([key, tweet]) => (
             <li key={key}>
-              {tweet.body.split(" ").map((word) => {
+              {tweet.body.split(" ").map((word: string) => {
                 if (word.charAt(0) === "#") {
                   const tag = word.slice(1);
                   return (

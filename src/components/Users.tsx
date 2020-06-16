@@ -4,8 +4,19 @@ import axios from "axios";
 import produce from "immer";
 import { Link } from "react-router-dom";
 
+type UserInfo = {
+  email: string;
+  following: string;
+};
+
+type User = {
+  [key: string]: UserInfo;
+};
+
+type Users = Array<User>;
+
 const Users = () => {
-  const [users, setUsers] = useState({});
+  const [users, setUsers] = useState<Users>([]);
 
   useEffect(() => {
     const getUsers = async () => {
@@ -18,7 +29,7 @@ const Users = () => {
     getUsers();
   }, []);
 
-  const follow = async (followee_id) => {
+  const follow = async (followee_id: string) => {
     const resp = await axios.post(
       `${process.env.REACT_APP_API_DOMAIN}/api/relationships`,
       { followee_id },
@@ -31,7 +42,7 @@ const Users = () => {
     );
   };
 
-  const unfollow = async (followee_id) => {
+  const unfollow = async (followee_id: string) => {
     const resp = await axios.delete(
       `${process.env.REACT_APP_API_DOMAIN}/api/relationships/${followee_id}`,
       { withCredentials: true }

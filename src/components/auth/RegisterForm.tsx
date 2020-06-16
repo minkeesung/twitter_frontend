@@ -4,37 +4,43 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import constants from "../../constants";
 
+type FormData = {
+  email: string;
+  password: string;
+  password_confirmation: string;
+};
+
 const RegisterForm = () => {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit } = useForm<FormData>();
   const dispatch = useDispatch();
 
-  const onSubmit = async (data) => {
-    const { email, password, password_confirmation } = data;
-
-    try {
-      const resp = await axios.post(
-        `${process.env.REACT_APP_API_DOMAIN}/api/registrations`,
-        {
-          user: {
-            email: email,
-            password: password,
-            password_confirmation: password_confirmation,
+  const onSubmit = handleSubmit(
+    async ({ email, password, password_confirmation }) => {
+      try {
+        const resp = await axios.post(
+          `${process.env.REACT_APP_API_DOMAIN}/api/registrations`,
+          {
+            user: {
+              email: email,
+              password: password,
+              password_confirmation: password_confirmation,
+            },
           },
-        },
-        { withCredentials: true }
-      );
-      dispatch({
-        type: constants.RECEIVE_CURRENT_USER,
-        currentUser: resp.data,
-      });
-    } catch (err) {
-      console.log(err);
+          { withCredentials: true }
+        );
+        dispatch({
+          type: constants.RECEIVE_CURRENT_USER,
+          currentUser: resp.data,
+        });
+      } catch (err) {
+        console.log(err);
+      }
     }
-  };
+  );
 
   return (
     <div>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={onSubmit}>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <label>
             Email:

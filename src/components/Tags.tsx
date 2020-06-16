@@ -2,9 +2,26 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-const Tags = (props) => {
-  const tag = props.location.pathname.slice(6);
-  const [tweets, setTweets] = useState(null);
+type pathname = {
+  pathname: string;
+};
+
+type location = {
+  location: pathname;
+};
+
+type tweet = {
+  created_at: string;
+  user_id: string;
+  body: string;
+  id: string;
+};
+
+type TweetArray = Array<tweet>;
+
+const Tags = ({ location }: location) => {
+  const tag = location.pathname.slice(6);
+  const [tweets, setTweets] = useState<TweetArray | null>(null);
 
   useEffect(() => {
     const fetchTweets = async () => {
